@@ -1,0 +1,40 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "Geist";
+  src: url("/fonts/Geist%5Bwght%5D.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Yozai";
+  src: url("/fonts/Yozai-Regular.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@theme {
+  --font-sans: "Geist", "Yozai", sans-serif;
+  --font-cjk: "Yozai", sans-serif;
+
+  --color-background: #ffffff;
+  --color-foreground: #171717;
+  --color-muted: #737373;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+}
+
+.font-cjk {
+  font-family: var(--font-cjk);
+}
