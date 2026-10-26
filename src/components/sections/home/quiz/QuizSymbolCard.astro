@@ -1,0 +1,24 @@
+---
+import type { QuizVisual } from "./quiz-data";
+
+interface Props {
+  visual: QuizVisual;
+}
+
+const { visual } = Astro.props;
+---
+
+<figure data-quiz-enter class="mt-4 flex h-44 w-full flex-col items-center justify-center rounded-2xl bg-accent-soft px-6 py-5 text-center">
+  {visual.pinyin && <p class="text-small text-muted">{visual.pinyin}</p>}
+  <div
+    lang={visual.lang}
+    class:list={[
+      "text-symbol",
+      visual.pinyin && "mt-2",
+      visual.lang === "zh" ? "font-cjk" : "font-sans",
+    ]}
+  >
+    {visual.symbol}
+  </div>
+  {visual.translation && <figcaption class="mt-2 text-small text-muted">{visual.translation}</figcaption>}
+</figure>

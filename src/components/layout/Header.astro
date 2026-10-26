@@ -1,0 +1,20 @@
+---
+import Container from "./Container.astro";
+---
+
+<header class="absolute inset-x-0 top-0 z-50" id="top">
+  <Container class="flex min-h-17 items-center justify-between gap-4 md:min-h-19">
+    <a
+      class="shrink-0 rounded-lg bg-accent-soft px-2 py-1 text-xs leading-none font-medium no-underline sm:text-sm focus-visible:outline-2 focus-visible:outline-offset-4"
+      href="/"
+      aria-label="itsvladami — главная"
+      data-site-reveal
+    >
+      itsvladami
+    </a>
+    <nav class="flex items-center gap-2 whitespace-nowrap" aria-label="Основная навигация" data-site-reveal>
+      <a class="rounded-lg bg-accent-soft px-2 py-1 text-xs leading-none font-medium no-underline transition-colors duration-200 hover:bg-ghost sm:text-sm motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-4" href="/#guides">Гайды</a>
+      <a class="rounded-lg bg-accent-soft px-2 py-1 text-xs leading-none font-medium no-underline transition-colors duration-200 hover:bg-ghost sm:text-sm motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-4" href="/#about">Обо мне</a>
+    </nav>
+  </Container>
+</header>

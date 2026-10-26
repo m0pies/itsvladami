@@ -1,0 +1,53 @@
+---
+import Button from "../../../Button.astro";
+import QuizOption from "./QuizOption.astro";
+import QuizProgress from "./QuizProgress.astro";
+import QuizSymbolCard from "./QuizSymbolCard.astro";
+import type { QuizQuestion } from "./quiz-data";
+
+interface Props {
+  question: QuizQuestion;
+  index: number;
+  total: number;
+}
+
+const { question, index, total } = Astro.props;
+const isLast = index === total - 1;
+---
+
+<div data-quiz-screen={index} class="hidden">
+  <p data-quiz-enter class="inline-flex rounded-lg bg-accent-soft px-2 py-1 text-xs leading-none font-medium sm:text-sm">
+    Какой ты город Китая по вайбу?
+  </p>
+
+  <div class="max-w-3xl">
+    <QuizProgress index={index} total={total} />
+  </div>
+
+  <div class="mt-8 max-w-3xl">
+    <h2 data-quiz-heading data-quiz-enter tabindex="-1" class="text-h2 text-balance outline-none">
+      {question.prompt}
+    </h2>
+
+    <QuizSymbolCard visual={question.visual} />
+
+    <div class="mt-4 grid grid-cols-2 gap-2 sm:gap-3" role="group" aria-label={`Варианты ответа на вопрос ${index + 1}`}>
+      {question.options.map((option) => <QuizOption option={option} step={index} />)}
+    </div>
+
+    <p
+      data-quiz-feedback
+      data-quiz-reveal
+      class="mt-3 hidden text-small mx-auto text-center max-w-xs text-muted"
+      role="status"
+      aria-live="polite"
+    >
+    </p>
+
+    <div data-quiz-next-wrapper data-quiz-reveal class="mt-4 hidden items-center justify-center">
+      <Button data-quiz-next type="button" size="sm">
+        {isLast ? "Узнать город" : "Далее"}
+      </Button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,100 @@
+---
+import Button from "../../Button.astro";
+import ImageGlyphCard from "../../ImageGlyphCard.astro";
+import Container from "../../layout/Container.astro";
+
+const cards = [
+  {
+    src: "/images/zhivoy-kontekst.webp",
+    alt: "Кадр из материалов itsvladami",
+    glyph: "耳机",
+    x: "-28vw",
+    y: "-26vh",
+    rotate: "-3deg",
+    width: "clamp(7rem, 14vw, 11rem)",
+    delay: "80ms",
+    z: 1,
+  },
+  {
+    src: "/images/hero.webp",
+    alt: "Фрагмент цифрового проекта",
+    glyph: "毛衣",
+    x: "28vw",
+    y: "-24vh",
+    rotate: "3deg",
+    width: "clamp(7rem, 11vw, 8.5rem)",
+    delay: "160ms",
+    z: 2,
+  },
+  {
+    src: "/images/bez-zubrezhki.webp",
+    alt: "Фрагмент страницы с гайдами",
+    glyph: "手提包",
+    x: "40vw",
+    y: "18vh",
+    rotate: "7deg",
+    width: "clamp(7rem, 11vw, 8.5rem)",
+    delay: "240ms",
+    z: 4,
+  },
+  {
+    src: "/images/hochetsya-prodolzhati.webp",
+    alt: "Обложка гайда «В Китай без китайского»",
+    glyph: "抹茶",
+    x: "-32vw",
+    y: "24vh",
+    rotate: "-3deg",
+    width: "clamp(7rem, 12vw, 9.5rem)",
+    delay: "300ms",
+    z: 2,
+  },
+  {
+    src: "/images/sovremenniy-kitayskiy.webp",
+    alt: "Фрагмент формы проекта",
+    glyph: "瑜伽",
+    x: "6vw",
+    y: "32vh",
+    rotate: "0deg",
+    width: "clamp(7rem, 13vw, 10rem)",
+    delay: "360ms",
+    z: 1,
+  },
+];
+
+const cardTranslate = (value: string) =>
+  value.startsWith("-")
+    ? `calc(-50% - ${value.slice(1)})`
+    : `calc(-50% + ${value})`;
+---
+
+<section class="relative isolate min-h-[90vh] overflow-hidden" aria-labelledby="hero-title">
+  <div class="pointer-events-none absolute inset-0 z-20" aria-hidden="true">
+    {cards.map((card) => (
+      <ImageGlyphCard
+        class="hero-card absolute top-1/2 left-1/2"
+        style={`--card-translate-x: ${cardTranslate(card.x)}; --card-translate-y: ${cardTranslate(card.y)}; --card-rotate: ${card.rotate}; --card-delay: ${card.delay}; width: ${card.width}; z-index: ${card.z};`}
+        src={card.src}
+        alt={card.alt}
+        glyph={card.glyph}
+        loading="eager"
+      >
+      </ImageGlyphCard>
+    ))}
+  </div>
+
+  <Container class="relative z-10 flex min-h-[94vh] items-center justify-center text-center">
+    <div class="flex max-w-5xl flex-col items-center">
+      <p class="hero-copy opacity-0 bg-accent-soft px-2 py-1 rounded-lg text-sm text-accent animate-hero-copy-in">@itsvladami</p>
+      <h1 id="hero-title" class="hero-copy mt-3 opacity-0 text-h1 animate-hero-copy-in">Китайский через то, что <span class="text-accent">интересно</span> тебе</h1>
+      <div class="hero-copy mt-6 opacity-0 animate-hero-button-in">
+        <Button 
+          variant="primary"
+          size="md"
+          href="#guides"
+        >
+          Выбрать гайд
+        </Button>
+      </div>
+    </div>
+  </Container>
+</section>

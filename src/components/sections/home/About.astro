@@ -1,0 +1,40 @@
+---
+import Section from "../../layout/Section.astro";
+---
+
+<Section id="about" labelledby="about-title">
+  <h2 id="about-title" class="text-h2 text-center" data-site-reveal>Обо мне</h2>
+  <div class="mt-4 grid md:grid-cols-12 md:items-center md:gap-16">
+    <div class="md:col-span-5" data-site-reveal>
+      <img
+        class="aspect-square w-full rounded-2xl border border-border object-cover "
+        src="/images/hero.webp"
+        alt="Автор itsvladami"
+        width="960"
+        height="1280"
+        loading="lazy"
+      />
+    </div>
+  </div>
+
+
+<div class="mt-8" data-site-reveal>
+  <p class="max-w-2xl text-small text-balance text-muted">Я преподаю китайский и собираю материалы, которые помогают сделать язык частью обычной жизни – через моду, поездки, культуру и то, что интересно.</p>
+  <div class="mt-8 flex flex-wrap gap-x-8 gap-y-8 md:mt-16">
+    <div class="min-w-0 flex-1 basis-2/5">
+      <p class="text-3xl leading-none text-accent font-semibold md:text-2xl">HSK 5</p>
+      <p class="mt-2 text-xs text-muted">Сертификцированный</p>
+    </div>
+
+    <div class="min-w-0 flex-1 basis-2/5">
+      <p class="text-3xl leading-none text-accent font-semibold md:text-2xl">5+ лет</p>
+      <p class="mt-2 text-xs text-muted">Опыт преподавания</p>
+    </div>
+
+    <div class="basis-full">
+      <p class="text-3xl leading-none text-accent font-semibold md:text-2xl">Высшее образование</p>
+      <p class="mt-2 text-xs text-muted">Зарубежное регионоведение (Китайское направление)</p>
+    </div>
+  </div>
+</div>  
+</Section>

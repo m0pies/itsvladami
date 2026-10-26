@@ -1,0 +1,38 @@
+---
+import Button from "../../../Button.astro";
+import type { GuideId, QuizGuide } from "./quiz-data";
+
+interface Props {
+  guideId: GuideId;
+  guide: QuizGuide;
+}
+
+const { guideId, guide } = Astro.props;
+---
+
+<article
+  data-quiz-guide-result={guideId}
+  data-quiz-enter
+  class="hidden grid-cols-[5.5rem_1fr] items-center gap-4 rounded-xl bg-white p-1 sm:grid-cols-[7rem_1fr] sm:gap-6 sm:p-4"
+>
+  <img
+    src={guide.cover}
+    alt={`Обложка гайда «${guide.title}»`}
+    width="960"
+    height="1280"
+    loading="lazy"
+    class="aspect-3/4 w-full rounded-lg object-cover"
+  />
+  <div>
+    <p class="text-small text-muted">Рекомендация</p>
+    <h3 class="mt-1 text-body">{guide.title}</h3>
+    <div class="mt-4 flex flex-wrap gap-2">
+      <Button size="sm" disabled ariaLabel={`Купить гайд «${guide.title}» за ${guide.price}`}>
+        {guide.price}
+      </Button>
+      <Button size="sm" variant="secondary" href="#guides" ariaLabel={`Подробнее о гайде «${guide.title}»`}>
+        Подробнее
+      </Button>
+    </div>
+  </div>
+</article>

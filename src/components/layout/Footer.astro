@@ -1,0 +1,61 @@
+---
+import Container from "./Container.astro";
+
+const socialLinks = [
+  {
+    label: "Instagram",
+    href: "https://www.instagram.com/itsvladami/",
+    icon: "/images/social/instagram-app-icon.jpg",
+  },
+  {
+    label: "Telegram",
+    href: "https://t.me/itsvladami",
+    icon: "/images/social/telegram-app-icon.jpg",
+  },
+  {
+    label: "YouTube",
+    href: "https://www.youtube.com/@itsvladami",
+    icon: "/images/social/youtube-app-icon.jpg",
+  },
+];
+---
+
+<footer class="pt-8 md:pt-20">
+  <Container>
+    <div class="flex w-full items-center justify-between gap-5" data-site-reveal>
+      <p class="text-hero">
+        itsvladami
+      </p>
+
+      <nav class="flex items-center gap-3" aria-label="Социальные сети">
+        {socialLinks.map((social) => (
+          <a
+            class="block overflow-hidden rounded-lg shadow-sm transition-transform duration-200 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-4 motion-reduce:transition-none"
+            href={social.href}
+            target="_blank"
+            rel="noreferrer"
+            aria-label={social.label}
+          >
+            <img
+              class="size-10 object-cover"
+              src={social.icon}
+              alt=""
+              width="512"
+              height="512"
+              loading="lazy"
+            />
+          </a>
+        ))}
+      </nav>
+    </div>
+
+    <div class="mt-8 border-t border-border py-4 text-small text-muted md:mt-28" data-site-reveal>
+      <p class="font-medium text-foreground">© 2026 Холодкова Владислава Максимовна</p>
+      <nav class="mt-8 flex max-w-xs flex-wrap gap-x-4 gap-y-2" aria-label="Юридическая информация">
+        <a class="transition-opacity duration-200 hover:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-4" href="#">Политика конфиденциальности</a>
+        <a class="transition-opacity duration-200 hover:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-4" href="#">Условия пользования</a>
+        <a class="transition-opacity duration-200 hover:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-4" href="#">Публичная оферта</a>
+      </nav>
+    </div>
+  </Container>
+</footer>

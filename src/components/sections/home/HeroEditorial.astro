@@ -1,0 +1,33 @@
+---
+import Button from "../../Button.astro";
+import Container from "../../layout/Container.astro";
+---
+
+<section class="h-[100svh] min-h-[36rem]" aria-labelledby="hero-title">
+  <Container class="flex h-full flex-col justify-between gap-6 py-4 md:gap-8 md:py-8">
+    <div class="flex flex-1 items-start justify-center pt-20 text-center md:pt-24">
+      <div class="flex max-w-3xl flex-col items-center">
+        <h1 id="hero-title" class="text-hero text-balance" data-site-reveal>
+          Китайский через то, что интересно тебе
+        </h1>
+        <div class="mt-4" data-site-reveal>
+          <Button variant="primary" size="sm" href="#guides">
+            Выбрать гайд
+          </Button>
+        </div>
+      </div>
+    </div>
+
+    <div class="h-[56svh] shrink-0 overflow-hidden border border-border rounded-2xl md:h-[36svh]" data-site-reveal>
+      <img
+        class="h-full w-full object-cover object-[center_82%]"
+        src="/images/sovremenniy-kitayskiy.webp"
+        alt="Радужная Кантонская башня вечером"
+        width="480"
+        height="640"
+        loading="eager"
+        fetchpriority="high"
+      />
+    </div>
+  </Container>
+</section>

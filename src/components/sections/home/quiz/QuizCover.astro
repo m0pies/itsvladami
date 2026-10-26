@@ -1,0 +1,31 @@
+---
+import Button from "../../../Button.astro";
+import QuizHeader from "./QuizHeader.astro";
+---
+
+<div data-quiz-screen="cover">
+  <QuizHeader />
+
+  <div class="max-w-3xl">
+    <div data-quiz-enter class="relative mt-4">
+      <img
+        src="/images/sh.webp"
+        alt="Панорама Шанхая"
+        width="1200"
+        height="630"
+        loading="lazy"
+        class="h-52 w-full rounded-2xl object-cover"
+      />
+      <Button
+        data-quiz-start
+        type="button"
+        size="sm"
+        variant="glass"
+        overlay
+        ariaLabel="Пройти тест «Какой ты город Китая по вайбу?»"
+      >
+        Пройти тест
+      </Button>
+    </div>
+  </div>
+</div>

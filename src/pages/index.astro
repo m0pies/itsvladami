@@ -1,14 +1,23 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import About from "../components/sections/home/About.astro";
+import Advantages from "../components/sections/home/Advantages.astro";
+import Faq from "../components/sections/home/Faq.astro";
+import Guides from "../components/sections/home/Guides.astro";
+import HeroEditorial from "../components/sections/home/HeroEditorial.astro";
+import Quiz from "../components/sections/home/Quiz.astro";
 ---
 
 <BaseLayout
-  title="itsvladami"
-  description="Описание проекта"
+  title="itsvladami — PDF-гайды по китайскому языку"
+  description="PDF-гайды о китайском языке от itsvladami. Цифровые материалы в одном месте."
 >
-  <main class="min-h-screen flex items-center justify-center">
-    <h1 class="text-6xl font-bold">
-      itsvladami
-    </h1>
+  <main>
+    <HeroEditorial />
+    <Guides />
+    <Advantages />
+    <Quiz />
+    <About />
+    <Faq />
   </main>
 </BaseLayout>

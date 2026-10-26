@@ -1,0 +1,25 @@
+---
+import type { QuizOption } from "./quiz-data";
+
+interface Props {
+  option: QuizOption;
+  step: number;
+}
+
+const { option, step } = Astro.props;
+---
+
+<button
+  type="button"
+  class="group flex w-full items-center justify-between gap-2 bg-accent-soft text-sm px-3 py-1.5 rounded-lg text-foreground transition-colors duration-150 hover:bg-ghost focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-default disabled:hover:bg-accent-soft data-[selected=true]:bg-accent data-[selected=true]:text-background data-[selected=true]:disabled:hover:bg-accent sm:min-h-18 sm:px-4 sm:text-base"
+  data-quiz-answer
+  data-quiz-enter
+  data-step={step}
+  data-answer={option.id}
+  data-city={option.city}
+  data-feedback={option.feedback}
+  data-selected="false"
+  aria-pressed="false"
+>
+  <span>{option.label}</span>
+</button>

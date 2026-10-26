@@ -1,0 +1,86 @@
+<script>
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const startTransform = "translateY(-0.75rem)";
+
+  const getImages = (element: HTMLElement) => {
+    const images = element.matches("img")
+      ? [element as HTMLImageElement]
+      : Array.from(element.querySelectorAll<HTMLImageElement>("img"));
+
+    return images.filter((image) => image.getClientRects().length > 0);
+  };
+
+  const decodeImages = (images: HTMLImageElement[]) => Promise.allSettled(
+    images.map((image) => image.decode?.() ?? Promise.resolve()),
+  );
+
+  const setupSiteMotion = () => {
+    const elements = Array.from(
+      document.querySelectorAll<HTMLElement>("[data-site-reveal]:not([data-site-reveal-ready])"),
+    );
+
+    if (elements.length === 0) return;
+
+    elements.forEach((element) => {
+      element.dataset.siteRevealReady = "true";
+    });
+
+    if (reducedMotion.matches || !("IntersectionObserver" in window)) return;
+
+    elements.forEach((element) => {
+      element.style.opacity = "0";
+      element.style.transform = startTransform;
+    });
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const enteringElements = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort(
+            (first, second) =>
+              elements.indexOf(first.target as HTMLElement) -
+              elements.indexOf(second.target as HTMLElement),
+          );
+
+        enteringElements.forEach((entry, index) => {
+          const element = entry.target as HTMLElement;
+          const delay = Math.min(index * 55, 385);
+          const images = getImages(element);
+
+          const reveal = () => {
+            element.getAnimations().forEach((animation) => animation.cancel());
+            const animation = element.animate(
+              [
+                { opacity: 0, transform: startTransform },
+                { opacity: 1, transform: "translateY(0)" },
+              ],
+              {
+                duration: 620,
+                delay,
+                easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+                fill: "both",
+              },
+            );
+
+            void animation.finished.then(() => {
+              element.style.opacity = "1";
+              element.style.transform = "translateY(0)";
+              animation.cancel();
+            }).catch(() => {});
+          };
+
+          if (images.length > 0) void decodeImages(images).then(reveal);
+          else reveal();
+
+          observer.unobserve(element);
+        });
+      },
+      { threshold: 0.15, rootMargin: "0px 0px -8% 0px" },
+    );
+
+    elements.forEach((element) => observer.observe(element));
+  };
+
+  setupSiteMotion();
+  document.addEventListener("astro:page-load", setupSiteMotion);
+</script>

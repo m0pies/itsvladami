@@ -1,0 +1,346 @@
+---
+import Section from "../../layout/Section.astro";
+import QuizCover from "./quiz/QuizCover.astro";
+import QuizQuestion from "./quiz/QuizQuestion.astro";
+import QuizResult from "./quiz/QuizResult.astro";
+import { questions } from "./quiz/quiz-data";
+---
+
+<Section id="quiz" labelledby="quiz-title">
+  <div data-quiz class="mx-auto w-full max-w-4xl">
+    <QuizCover />
+
+    {questions.map((question, index) => (
+      <QuizQuestion question={question} index={index} total={questions.length} />
+    ))}
+
+    <QuizResult />
+  </div>
+</Section>
+
+<script>
+  type CityId = "shanghai" | "beijing" | "shenzhen" | "guangzhou";
+  type Answer = { id: string; city: CityId };
+
+  const quiz = document.querySelector<HTMLElement>("[data-quiz]");
+
+  if (quiz) {
+    const answers: Array<Answer | null> = [null, null, null, null];
+    const screens = Array.from(quiz.querySelectorAll<HTMLElement>("[data-quiz-screen]"));
+    const answerButtons = Array.from(quiz.querySelectorAll<HTMLButtonElement>("[data-quiz-answer]"));
+    const resultItems = Array.from(quiz.querySelectorAll<HTMLElement>("[data-quiz-city-result]"));
+    const guideItems = Array.from(quiz.querySelectorAll<HTMLElement>("[data-quiz-guide-result]"));
+    const resultTitle = quiz.querySelector<HTMLElement>("[data-quiz-result-title]");
+    const resultNote = quiz.querySelector<HTMLElement>("[data-quiz-result-note]");
+    const restartControl = quiz.querySelector<HTMLElement>("[data-quiz-restart-control]");
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const startTransform = "translateY(-0.75rem)";
+    const animationVersions = new WeakMap<HTMLElement, number>();
+    let restartRevealTimer: number | undefined;
+
+    const getImages = (element: HTMLElement) => {
+      const images = element.matches("img")
+        ? [element as HTMLImageElement]
+        : Array.from(element.querySelectorAll<HTMLImageElement>("img"));
+
+      return images.filter((image) => image.getClientRects().length > 0);
+    };
+
+    const decodeImages = (images: HTMLImageElement[]) => Promise.allSettled(
+      images.map((image) => image.decode?.() ?? Promise.resolve()),
+    );
+
+    const animateElement = (element: HTMLElement, delay = 0) => {
+      if (reducedMotion.matches) return;
+
+      const images = getImages(element);
+      const version = (animationVersions.get(element) ?? 0) + 1;
+
+      animationVersions.set(element, version);
+      element.getAnimations().forEach((animation) => animation.cancel());
+      element.style.opacity = "0";
+      element.style.transform = startTransform;
+
+      const reveal = () => {
+        if (animationVersions.get(element) !== version || element.getClientRects().length === 0) return;
+
+        const animation = element.animate(
+          [
+            { opacity: 0, transform: startTransform },
+            { opacity: 1, transform: "translateY(0)" },
+          ],
+          {
+            duration: 620,
+            delay,
+            easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+            fill: "both",
+          },
+        );
+
+        void animation.finished.then(() => {
+          if (animationVersions.get(element) !== version) return;
+
+          element.style.opacity = "1";
+          element.style.transform = "translateY(0)";
+          animation.cancel();
+        }).catch(() => {});
+      };
+
+      if (images.length > 0) void decodeImages(images).then(reveal);
+      else reveal();
+    };
+
+    const animateScreen = (screen: HTMLElement) => {
+      const elements = Array.from(screen.querySelectorAll<HTMLElement>("[data-quiz-enter]"))
+        .filter((element) => element.getClientRects().length > 0);
+
+      elements.forEach((element, index) => {
+        animateElement(element, Math.min(index * 55, 385));
+      });
+    };
+
+    const keepScreenVisible = (screen: HTMLElement) => {
+      requestAnimationFrame(() => {
+        const rect = screen.getBoundingClientRect();
+        const fullyVisible = rect.top >= 0 && rect.bottom <= window.innerHeight;
+        if (fullyVisible) return;
+
+        screen.scrollIntoView({
+          behavior: reducedMotion.matches ? "auto" : "smooth",
+          block: rect.height <= window.innerHeight ? "center" : "start",
+        });
+      });
+    };
+
+    const animateProgress = (screen: HTMLElement, from?: number) => {
+      const progress = screen.querySelector<HTMLElement>("[data-quiz-progress]");
+      const fill = progress?.querySelector<HTMLElement>("[data-quiz-progress-fill]");
+      const marker = progress?.querySelector<HTMLElement>("[data-quiz-progress-marker]");
+      const target = Number(progress?.dataset.progressTarget);
+
+      if (!progress || !fill || !marker || Number.isNaN(target)) return;
+
+      if (from === undefined || reducedMotion.matches) {
+        fill.style.width = `${target}%`;
+        marker.style.left = `${target}%`;
+        return;
+      }
+
+      fill.style.transition = "none";
+      marker.style.transition = "none";
+      fill.style.width = `${from}%`;
+      marker.style.left = `${from}%`;
+      progress.getBoundingClientRect();
+
+      requestAnimationFrame(() => {
+        fill.style.removeProperty("transition");
+        marker.style.removeProperty("transition");
+
+        requestAnimationFrame(() => {
+          fill.style.width = `${target}%`;
+          marker.style.left = `${target}%`;
+        });
+      });
+    };
+
+    const showScreen = (name: string, progressFrom?: number) => {
+      screens.forEach((screen) => {
+        screen.classList.toggle("hidden", screen.dataset.quizScreen !== name);
+      });
+
+      const activeScreen = quiz.querySelector<HTMLElement>(`[data-quiz-screen="${name}"]`);
+      const heading = activeScreen?.querySelector<HTMLElement>("[data-quiz-heading]");
+
+      if (activeScreen) {
+        animateProgress(activeScreen, progressFrom);
+        animateScreen(activeScreen);
+      }
+
+      requestAnimationFrame(() => {
+        heading?.focus({ preventScroll: true });
+        if (activeScreen) keepScreenVisible(activeScreen);
+      });
+    };
+
+    const refreshStep = (step: number) => {
+      const screen = quiz.querySelector<HTMLElement>(`[data-quiz-screen="${step}"]`);
+      if (!screen) return;
+      const hasAnswer = Boolean(answers[step]);
+
+      answerButtons
+        .filter((button) => Number(button.dataset.step) === step)
+        .forEach((button) => {
+          const selected = button.dataset.answer === answers[step]?.id;
+          button.dataset.selected = String(selected);
+          button.setAttribute("aria-pressed", String(selected));
+          button.disabled = hasAnswer;
+        });
+
+      const feedback = screen.querySelector<HTMLElement>("[data-quiz-feedback]");
+      const nextWrapper = screen.querySelector<HTMLElement>("[data-quiz-next-wrapper]");
+      const shouldAnimateReveal = hasAnswer && Boolean(feedback?.classList.contains("hidden"));
+      const selectedButton = answerButtons.find(
+        (button) => Number(button.dataset.step) === step && button.dataset.answer === answers[step]?.id,
+      );
+
+      if (feedback) feedback.textContent = selectedButton?.dataset.feedback ?? "";
+      feedback?.classList.toggle("hidden", !hasAnswer);
+      nextWrapper?.classList.toggle("hidden", !hasAnswer);
+      nextWrapper?.classList.toggle("flex", hasAnswer);
+
+      if (shouldAnimateReveal) {
+        requestAnimationFrame(() => {
+          if (feedback) animateElement(feedback);
+          if (nextWrapper) animateElement(nextWrapper, 70);
+          keepScreenVisible(screen);
+        });
+      }
+    };
+
+    const hideRestartControl = () => {
+      if (restartRevealTimer !== undefined) {
+        window.clearTimeout(restartRevealTimer);
+        restartRevealTimer = undefined;
+      }
+
+      restartControl?.classList.add("hidden", "opacity-0", "pointer-events-none");
+      restartControl?.classList.remove("flex", "opacity-100", "pointer-events-auto");
+    };
+
+    const scheduleRestartReveal = (resultItem: HTMLElement | undefined) => {
+      hideRestartControl();
+      const image = resultItem?.querySelector<HTMLElement>("[data-quiz-result-image]");
+      if (!restartControl || !image) return;
+
+      image.append(restartControl);
+      restartRevealTimer = window.setTimeout(() => {
+        restartControl.classList.remove("hidden");
+        restartControl.classList.add("flex");
+        restartControl.getBoundingClientRect();
+
+        requestAnimationFrame(() => {
+          restartControl.classList.remove("opacity-0", "pointer-events-none");
+          restartControl.classList.add("opacity-100", "pointer-events-auto");
+        });
+      }, 3000);
+    };
+
+    const resetResult = () => {
+      hideRestartControl();
+      resultItems.forEach((item) => item.classList.add("hidden"));
+      guideItems.forEach((item) => {
+        item.classList.add("hidden");
+        item.classList.remove("grid");
+      });
+
+      if (resultTitle) resultTitle.textContent = "Твой город";
+      if (resultNote) {
+        resultNote.textContent = "";
+        resultNote.classList.add("hidden");
+      }
+    };
+
+    const showResult = () => {
+      if (answers.some((answer) => !answer)) return;
+      resetResult();
+
+      const scores: Record<CityId, number> = {
+        shanghai: 0,
+        beijing: 0,
+        shenzhen: 0,
+        guangzhou: 0,
+      };
+
+      answers.forEach((answer) => {
+        if (answer) scores[answer.city] += 1;
+      });
+
+      const topScore = Math.max(...Object.values(scores));
+      const isEvenSplit = topScore === 1;
+      const winners = isEvenSplit
+        ? (["shanghai"] as CityId[])
+        : (Object.keys(scores) as CityId[]).filter((city) => scores[city] === topScore);
+
+      const winningResultItems = resultItems
+        .filter((item) => winners.includes(item.dataset.quizCityResult as CityId));
+
+      winningResultItems.forEach((item) => item.classList.remove("hidden"));
+
+      const winningGuides = new Set(
+        resultItems
+          .filter((item) => winners.includes(item.dataset.quizCityResult as CityId))
+          .map((item) => item.dataset.guideId),
+      );
+
+      guideItems.forEach((item) => {
+        const isVisible = winningGuides.has(item.dataset.quizGuideResult);
+        if (isVisible) {
+          item.classList.remove("hidden");
+          item.classList.add("grid");
+        }
+      });
+
+      if (resultTitle) {
+        const winnerLabels = resultItems
+          .filter((item) => winners.includes(item.dataset.quizCityResult as CityId))
+          .map((item) => `${item.dataset.cityEmoji} ${item.dataset.cityName}`);
+
+        resultTitle.textContent = winners.length > 1
+          ? `Твои города – ${winnerLabels.join(" и ")}`
+          : `Твой город – ${winnerLabels[0]}`;
+      }
+
+      if (resultNote) {
+        resultNote.textContent = isEvenSplit
+          ? "Все четыре вайба совпали поровну, поэтому Шанхай станет самым универсальным входом."
+          : winners.length > 1
+            ? "У тебя одинаково сильны два направления — посмотри оба результата и начни с того, что ближе прямо сейчас."
+            : "";
+        resultNote.classList.toggle("hidden", !resultNote.textContent);
+      }
+
+      showScreen("result");
+      scheduleRestartReveal(winningResultItems[0]);
+    };
+
+    answerButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        const step = Number(button.dataset.step);
+        const city = button.dataset.city as CityId | undefined;
+        const id = button.dataset.answer;
+
+        if (!city || !id || answers[step]) return;
+        answers[step] = { id, city };
+        refreshStep(step);
+      });
+    });
+
+    quiz.querySelector<HTMLButtonElement>("[data-quiz-start]")?.addEventListener("click", () => {
+      showScreen("0", 0);
+    });
+
+    quiz.querySelectorAll<HTMLButtonElement>("[data-quiz-next]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const step = Number(button.closest<HTMLElement>("[data-quiz-screen]")?.dataset.quizScreen);
+        if (!answers[step]) return;
+
+        if (step === answers.length - 1) showResult();
+        else {
+          refreshStep(step + 1);
+          const currentProgress = (step / (answers.length - 1)) * 100;
+          showScreen(String(step + 1), currentProgress);
+        }
+      });
+    });
+
+    quiz.querySelector<HTMLButtonElement>("[data-quiz-restart]")?.addEventListener("click", () => {
+      answers.fill(null);
+      for (let step = 0; step < answers.length; step += 1) refreshStep(step);
+      resetResult();
+      showScreen("0", 0);
+    });
+
+    const cover = quiz.querySelector<HTMLElement>('[data-quiz-screen="cover"]');
+    if (cover) animateScreen(cover);
+  }
+</script>

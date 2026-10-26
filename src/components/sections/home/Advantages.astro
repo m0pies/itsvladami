@@ -1,0 +1,308 @@
+---
+import Section from "../../layout/Section.astro";
+
+const advantages = [
+  {
+    id: "close-topic",
+    label: "Близкая тема",
+    description: "Начинай со стиля, поездок или того, что тебе уже интересно в повседневной жизни.",
+    image: "/images/hochetsya-prodolzhati.webp",
+    imageAlt: "Чай и спокойный момент для изучения китайского",
+  },
+  {
+    id: "living-context",
+    label: "Живой контекст",
+    description: "Слова появляются внутри ситуаций и фраз – понятно, где и как их использовать.",
+    image: "/images/zhivoy-kontekst.webp",
+    imageAlt: "Повседневный момент, в котором можно заметить китайский язык",
+  },
+  {
+    id: "keep-going",
+    label: "Хочется продолжать",
+    description: "Когда тема цепляет, появляется повод снова открыть китайский и узнать больше.",
+    image: "/images/blizkaya-tema.webp",
+    imageAlt: "Деталь повседневной жизни для изучения китайского через интересы",
+  },
+  {
+    id: "modern-china",
+    label: "Современный Китай",
+    description: "Вместе с языком открываешь его города, привычки, технологии и стиль.",
+    image: "/images/sovremenniy-kitayskiy.webp",
+    imageAlt: "Городской стиль и детали современного Китая",
+  },
+  {
+    id: "without-cramming",
+    label: "Без зубрёжки",
+    description: "Разбираешься в языке через интересную тему, а не только повторяешь списки слов.",
+    image: "/images/bez-zubrezhki.webp",
+    imageAlt: "Повседневный способ учить китайский без зубрёжки",
+  },
+];
+---
+
+<Section id="advantages" labelledby="advantages-title">
+  <div data-advantages>
+    <h2 id="advantages-title" class="text-h2 text-center" data-site-reveal>Преимущества</h2>
+
+    <div class="mt-4 space-y- md:mt-14 md:space-y-8" data-site-reveal>
+      {advantages.map((advantage, index) => (
+        <div
+          data-advantage-image-panel={advantage.id}
+          id={`advantage-image-panel-${advantage.id}`}
+          class:list={[index !== 0 && "hidden"]}
+        >
+          <div class="flex flex-col items-center text-center">
+            <img
+              class="aspect-square w-full max-w-sm rounded-2xl border border-border object-cover "
+              src={advantage.image}
+              alt={advantage.imageAlt}
+              width="960"
+              height="1280"
+              loading={index === 0 ? "eager" : "lazy"}
+            />
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <div class="mt-4 flex justify-center md:mt-10" data-site-reveal>
+      <div
+        class="relative w-fit max-w-full   overflow-hidden rounded-xl bg-accent-soft py-1"
+        data-advantage-control-shell
+        data-overflow-left="false"
+        data-overflow-right="false"
+      >
+        <button
+          type="button"
+          class="pointer-events-none absolute inset-y-0 left-0 z-10 flex aspect-square h-full cursor-pointer items-center justify-center rounded-lg bg-gradient-to-r from-accent-soft to-transparent opacity-0 transition-opacity duration-200"
+          data-advantage-hint-left
+          data-advantage-step="prev"
+          aria-label="Предыдущее преимущество"
+          aria-hidden="true"
+        >
+          <span class="block h-2 w-2 rotate-[-135deg] border-r border-t border-foreground"></span>
+        </button>
+
+        <button
+          type="button"
+          class="pointer-events-none absolute inset-y-0 right-0 z-10 flex aspect-square h-full cursor-pointer items-center justify-center rounded-lg bg-gradient-to-l from-ghost to-transparent opacity-0 transition-opacity duration-200"
+          data-advantage-hint-right
+          data-advantage-step="next"
+          aria-label="Следующее преимущество"
+          aria-hidden="true"
+        >
+          <span class="block h-2 w-2 rotate-45 border-r border-t border-foreground"></span>
+        </button>
+
+        <div
+          class="max-w-full overflow-x-auto overflow-y-hidden px-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          data-advantage-control-scroll
+          role="tablist"
+          aria-label="Преимущества обучения"
+        >
+          <div class="relative inline-flex min-w-max gap-1">
+            <span
+              class="pointer-events-none absolute inset-y-0 left-0 z-0 rounded-lg bg-accent transition-[transform,width] duration-300 ease-out"
+              data-advantage-active-pill
+              aria-hidden="true"
+            ></span>
+
+            {advantages.map((advantage, index) => (
+              <button
+                id={`advantage-tab-${advantage.id}`}
+                type="button"
+                role="tab"
+                class:list={[
+                  "relative z-1 cursor-pointer whitespace-nowrap rounded-lg border-0 bg-transparent px-3 py-1.5 text-sm font-regular transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 md:px-5 md:text-base",
+                  index === 0 ? "text-background" : "text-muted hover:text-foreground",
+                ]}
+                data-advantage-tab={advantage.id}
+                aria-selected={index === 0 ? "true" : "false"}
+                aria-controls={`advantage-panel-${advantage.id}`}
+                tabindex={index === 0 ? 0 : -1}
+              >
+                {advantage.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-4 text-center md:mt-10" data-site-reveal>
+      {advantages.map((advantage, index) => (
+        <div
+          data-advantage-copy-panel={advantage.id}
+          id={`advantage-panel-${advantage.id}`}
+          role="tabpanel"
+          aria-labelledby={`advantage-tab-${advantage.id}`}
+          class:list={[index !== 0 && "hidden"]}
+        >
+          <p class="mx-auto max-w-xs text-small text-balance text-muted">
+            <span class="text-stone-800">{advantage.label}.</span> {advantage.description}
+          </p>
+        </div>
+      ))}
+    </div>
+  </div>
+</Section>
+
+<script>
+  const sections = document.querySelectorAll<HTMLElement>("[data-advantages]");
+
+  const syncActivePill = (section: HTMLElement, advantageId: string, shouldAnimate = true) => {
+    const pill = section.querySelector<HTMLElement>("[data-advantage-active-pill]");
+    const activeTab = section.querySelector<HTMLElement>(`[data-advantage-tab="${advantageId}"]`);
+
+    if (!pill || !activeTab) return;
+
+    if (!shouldAnimate) pill.classList.add("transition-none");
+
+    pill.style.width = `${activeTab.offsetWidth}px`;
+    pill.style.transform = `translateX(${activeTab.offsetLeft}px)`;
+
+    if (!shouldAnimate) {
+      requestAnimationFrame(() => pill.classList.remove("transition-none"));
+    }
+  };
+
+  const syncSelectedPill = (section: HTMLElement, shouldAnimate = false) => {
+    const activeTab = section.querySelector<HTMLButtonElement>(
+      '[data-advantage-tab][aria-selected="true"]',
+    );
+    const activeId = activeTab?.dataset.advantageTab;
+
+    if (activeId) syncActivePill(section, activeId, shouldAnimate);
+  };
+
+  const setHintVisibility = (section: HTMLElement, side: "left" | "right", isVisible: boolean) => {
+    const hint = section.querySelector<HTMLElement>(`[data-advantage-hint-${side}]`);
+
+    if (!hint) return;
+
+    hint.classList.toggle("opacity-100", isVisible);
+    hint.classList.toggle("opacity-0", !isVisible);
+    hint.classList.toggle("pointer-events-auto", isVisible);
+    hint.classList.toggle("pointer-events-none", !isVisible);
+    hint.setAttribute("aria-hidden", String(!isVisible));
+  };
+
+  const syncOverflowState = (section: HTMLElement) => {
+    const shell = section.querySelector<HTMLElement>("[data-advantage-control-shell]");
+    const scroll = section.querySelector<HTMLElement>("[data-advantage-control-scroll]");
+
+    if (!shell || !scroll) return;
+
+    const maxScrollLeft = Math.max(0, scroll.scrollWidth - scroll.clientWidth);
+    const canScrollLeft = scroll.scrollLeft > 4;
+    const canScrollRight = scroll.scrollLeft < maxScrollLeft - 4;
+
+    shell.dataset.overflowLeft = String(canScrollLeft);
+    shell.dataset.overflowRight = String(canScrollRight);
+    setHintVisibility(section, "left", canScrollLeft);
+    setHintVisibility(section, "right", canScrollRight);
+  };
+
+  const setActiveState = (section: HTMLElement, advantageId: string) => {
+    const tabs = Array.from(section.querySelectorAll<HTMLButtonElement>("[data-advantage-tab]"));
+    const imagePanels = Array.from(section.querySelectorAll<HTMLElement>("[data-advantage-image-panel]"));
+    const copyPanels = Array.from(section.querySelectorAll<HTMLElement>("[data-advantage-copy-panel]"));
+
+    tabs.forEach((tab) => {
+      const isActive = tab.dataset.advantageTab === advantageId;
+
+      tab.setAttribute("aria-selected", String(isActive));
+      tab.tabIndex = isActive ? 0 : -1;
+      tab.classList.toggle("text-background", isActive);
+      tab.classList.toggle("text-muted", !isActive);
+      tab.classList.toggle("hover:text-foreground", !isActive);
+
+      if (isActive) {
+        tab.scrollIntoView({
+          behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+          block: "nearest",
+          inline: "center",
+        });
+      }
+    });
+
+    imagePanels.forEach((panel) => {
+      panel.classList.toggle("hidden", panel.dataset.advantageImagePanel !== advantageId);
+    });
+
+    copyPanels.forEach((panel) => {
+      panel.classList.toggle("hidden", panel.dataset.advantageCopyPanel !== advantageId);
+    });
+
+    syncActivePill(section, advantageId);
+    syncOverflowState(section);
+  };
+
+  const stepState = (section: HTMLElement, direction: number) => {
+    const tabs = Array.from(section.querySelectorAll<HTMLButtonElement>("[data-advantage-tab]"));
+    const activeIndex = tabs.findIndex((tab) => tab.getAttribute("aria-selected") === "true");
+
+    if (activeIndex < 0) return;
+
+    const nextIndex = Math.max(0, Math.min(tabs.length - 1, activeIndex + direction));
+    const nextId = tabs[nextIndex]?.dataset.advantageTab;
+
+    if (nextId && nextIndex !== activeIndex) setActiveState(section, nextId);
+  };
+
+  sections.forEach((section) => {
+    const tabs = Array.from(section.querySelectorAll<HTMLButtonElement>("[data-advantage-tab]"));
+    const scroll = section.querySelector<HTMLElement>("[data-advantage-control-scroll]");
+    const initialId = tabs[0]?.dataset.advantageTab;
+
+    tabs.forEach((tab, index) => {
+      tab.addEventListener("click", () => {
+        if (tab.dataset.advantageTab) setActiveState(section, tab.dataset.advantageTab);
+      });
+
+      tab.addEventListener("keydown", (event) => {
+        if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") return;
+
+        event.preventDefault();
+        const direction = event.key === "ArrowRight" ? 1 : -1;
+        const nextIndex = (index + direction + tabs.length) % tabs.length;
+        const nextId = tabs[nextIndex]?.dataset.advantageTab;
+
+        if (nextId) {
+          tabs[nextIndex].focus();
+          setActiveState(section, nextId);
+        }
+      });
+    });
+
+    section.querySelectorAll<HTMLButtonElement>("[data-advantage-step]").forEach((button) => {
+      button.addEventListener("click", () => {
+        stepState(section, button.dataset.advantageStep === "prev" ? -1 : 1);
+      });
+    });
+
+    scroll?.addEventListener("scroll", () => syncOverflowState(section), { passive: true });
+    window.addEventListener("resize", () => {
+      syncOverflowState(section);
+      syncSelectedPill(section);
+    });
+
+    if (initialId) syncActivePill(section, initialId, false);
+    syncOverflowState(section);
+
+    if ("ResizeObserver" in window) {
+      const resizeObserver = new ResizeObserver(() => {
+        syncSelectedPill(section);
+        syncOverflowState(section);
+      });
+
+      tabs.forEach((tab) => resizeObserver.observe(tab));
+      if (scroll) resizeObserver.observe(scroll);
+    }
+
+    document.fonts?.ready.then(() => {
+      syncSelectedPill(section);
+      syncOverflowState(section);
+    });
+  });
+</script>

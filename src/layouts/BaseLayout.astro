@@ -1,19 +1,19 @@
 ---
 import "../styles/global.css";
+import Footer from "../components/layout/Footer.astro";
+import Header from "../components/layout/Header.astro";
+import SiteMotion from "../components/motion/SiteMotion.astro";
 
 interface Props {
   title: string;
   description: string;
 }
 
-const {
-  title,
-  description,
-} = Astro.props;
+const { title, description } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="ru">
+<html lang="ru" class="scroll-smooth motion-reduce:scroll-auto">
   <head>
     <meta charset="UTF-8" />
     <meta
@@ -31,7 +31,12 @@ const {
     <title>{title}</title>
   </head>
 
-  <body class="min-h-screen bg-white text-neutral-950 antialiased font-sans">
+  <body class="bg-background font-sans text-foreground antialiased selection:bg-accent-soft selection:text-foreground">
+    <Header />
+
     <slot />
+
+    <Footer />
+    <SiteMotion />
   </body>
 </html>
