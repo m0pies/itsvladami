@@ -14,7 +14,7 @@ import type { GuideId } from "./quiz-data";
   </h2>
   <p data-quiz-result-note data-quiz-enter class="mt-3 hidden max-w-2xl text-small text-muted"></p>
 
-  <div class="mt-4 space-y-8" data-quiz-result-list>
+  <div class="mt-4" data-quiz-result-list>
     {Object.entries(cityResults).map(([cityId, result]) => (
       <article
         class="hidden"
@@ -33,12 +33,12 @@ import type { GuideId } from "./quiz-data";
             class="h-52 w-full rounded-2xl object-cover"
           />
         </div>
-        <p data-quiz-enter class="mt-4 mx-auto text-center max-w-xs text-small text-muted">{result.description}</p>
+        <p data-quiz-enter class="mt-8 mx-auto text-center max-w-xs text-small text-muted">{result.description}</p>
       </article>
     ))}
   </div>
 
-  <div class="mt-4" data-quiz-guide-list>
+  <div class="mt-8" data-quiz-guide-list>
     {Object.entries(quizGuides).map(([guideId, guide]) => (
       <QuizGuideBanner guideId={guideId as GuideId} guide={guide} />
     ))}

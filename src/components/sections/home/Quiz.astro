@@ -8,7 +8,7 @@ import { questions } from "./quiz/quiz-data";
 
 <Section id="quiz" labelledby="quiz-title">
   <div data-quiz class="mx-auto w-full max-w-4xl">
-    <QuizCover />
+    <QuizCover total={questions.length} />
 
     {questions.map((question, index) => (
       <QuizQuestion question={question} index={index} total={questions.length} />
@@ -25,8 +25,9 @@ import { questions } from "./quiz/quiz-data";
   const quiz = document.querySelector<HTMLElement>("[data-quiz]");
 
   if (quiz) {
-    const answers: Array<Answer | null> = [null, null, null, null];
     const screens = Array.from(quiz.querySelectorAll<HTMLElement>("[data-quiz-screen]"));
+    const questionScreens = Array.from(quiz.querySelectorAll<HTMLElement>("[data-quiz-question]"));
+    const answers: Array<Answer | null> = Array.from({ length: questionScreens.length }, () => null);
     const answerButtons = Array.from(quiz.querySelectorAll<HTMLButtonElement>("[data-quiz-answer]"));
     const resultItems = Array.from(quiz.querySelectorAll<HTMLElement>("[data-quiz-city-result]"));
     const guideItems = Array.from(quiz.querySelectorAll<HTMLElement>("[data-quiz-guide-result]"));
@@ -178,20 +179,23 @@ import { questions } from "./quiz/quiz-data";
 
       const feedback = screen.querySelector<HTMLElement>("[data-quiz-feedback]");
       const nextWrapper = screen.querySelector<HTMLElement>("[data-quiz-next-wrapper]");
-      const shouldAnimateReveal = hasAnswer && Boolean(feedback?.classList.contains("hidden"));
       const selectedButton = answerButtons.find(
         (button) => Number(button.dataset.step) === step && button.dataset.answer === answers[step]?.id,
       );
+      const selectedFeedback = selectedButton?.dataset.feedback?.trim() ?? "";
+      const hasFeedback = hasAnswer && selectedFeedback.length > 0;
+      const shouldAnimateFeedback = hasFeedback && Boolean(feedback?.classList.contains("hidden"));
+      const shouldAnimateNext = hasAnswer && Boolean(nextWrapper?.classList.contains("hidden"));
 
-      if (feedback) feedback.textContent = selectedButton?.dataset.feedback ?? "";
-      feedback?.classList.toggle("hidden", !hasAnswer);
+      if (feedback) feedback.textContent = selectedFeedback;
+      feedback?.classList.toggle("hidden", !hasFeedback);
       nextWrapper?.classList.toggle("hidden", !hasAnswer);
       nextWrapper?.classList.toggle("flex", hasAnswer);
 
-      if (shouldAnimateReveal) {
+      if (shouldAnimateFeedback || shouldAnimateNext) {
         requestAnimationFrame(() => {
-          if (feedback) animateElement(feedback);
-          if (nextWrapper) animateElement(nextWrapper, 70);
+          if (shouldAnimateFeedback && feedback) animateElement(feedback);
+          if (shouldAnimateNext && nextWrapper) animateElement(nextWrapper, shouldAnimateFeedback ? 70 : 0);
           keepScreenVisible(screen);
         });
       }
@@ -256,10 +260,7 @@ import { questions } from "./quiz/quiz-data";
       });
 
       const topScore = Math.max(...Object.values(scores));
-      const isEvenSplit = topScore === 1;
-      const winners = isEvenSplit
-        ? (["shanghai"] as CityId[])
-        : (Object.keys(scores) as CityId[]).filter((city) => scores[city] === topScore);
+      const winners = (Object.keys(scores) as CityId[]).filter((city) => scores[city] === topScore);
 
       const winningResultItems = resultItems
         .filter((item) => winners.includes(item.dataset.quizCityResult as CityId));
@@ -291,11 +292,9 @@ import { questions } from "./quiz/quiz-data";
       }
 
       if (resultNote) {
-        resultNote.textContent = isEvenSplit
-          ? "Все четыре вайба совпали поровну, поэтому Шанхай станет самым универсальным входом."
-          : winners.length > 1
-            ? "У тебя одинаково сильны два направления — посмотри оба результата и начни с того, что ближе прямо сейчас."
-            : "";
+        resultNote.textContent = winners.length > 1
+          ? "У тебя одинаково сильны несколько направлений — посмотри результаты и начни с того, что ближе прямо сейчас."
+          : "";
         resultNote.classList.toggle("hidden", !resultNote.textContent);
       }
 

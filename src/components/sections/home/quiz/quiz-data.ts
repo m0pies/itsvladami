@@ -4,7 +4,7 @@ export interface QuizOption {
   id: string;
   label: string;
   city: CityId;
-  feedback: string;
+  feedback?: string;
 }
 
 export interface QuizQuestion {
@@ -15,10 +15,12 @@ export interface QuizQuestion {
 }
 
 export interface QuizVisual {
-  symbol: string;
+  symbol?: string;
   pinyin?: string;
   translation?: string;
   lang?: "zh";
+  image?: string;
+  alt?: string;
 }
 
 export interface CityResult {
@@ -38,6 +40,36 @@ export interface QuizGuide {
 }
 
 export const questions: QuizQuestion[] = [
+  {
+    id: "free-time",
+    prompt: "Как ты проводишь досуг?",
+    visual: {
+      image: "/images/dosug.webp",
+      alt: "Прогулка по городу",
+    },
+    options: [
+      {
+        id: "books-and-films",
+        label: "Книги / кино",
+        city: "beijing",
+      },
+      {
+        id: "walk-and-music",
+        label: "Гуляю по городу",
+        city: "shenzhen",
+      },
+      {
+        id: "exhibitions-and-museums",
+        label: "Выставки / музей",
+        city: "shanghai",
+      },
+      {
+        id: "friends-and-food",
+        label: "С друзьми",
+        city: "guangzhou",
+      },
+    ],
+  },
   {
     id: "mountain",
     prompt: "Что ты здесь видишь?",
@@ -69,6 +101,40 @@ export const questions: QuizQuestion[] = [
         label: "ступени",
         city: "guangzhou",
         feedback: "Похоже на ступени, но на самом деле это гора. Древняя форма изображала три пика и со временем стала квадратнее.",
+      },
+    ],
+  },
+  {
+    id: "music",
+    prompt: "Какую музыку ты любишь?",
+    visual: {
+      image: "/images/music.webp",
+      alt: "Наушники",
+    },
+    options: [
+      {
+        id: "lana-del-rey",
+        label: "Лана Дель Рей",
+        city: "beijing",
+        feedback: "Ага, ты любишь меланхоличную и кинематографичную музыку – такую, под которую хочется смотреть в окно и немного грустить красиво.",
+      },
+      {
+        id: "madk1d",
+        label: "Мэдкид",
+        city: "shenzhen",
+        feedback: "Ага, тебе нужен драйв: электронный звук, резкий бит и ощущение, что ночь только начинается.",
+      },
+      {
+        id: "charli-xcx",
+        label: "Charli xcx",
+        city: "shanghai",
+        feedback: "Ага, ты выбираешь яркий поп, блеск и танцы –— чем громче и смелее, тем лучше.",
+      },
+      {
+        id: "miyagi-and-andy-panda",
+        label: "Miyagi & Andy Panda",
+        city: "guangzhou",
+        feedback: "Ага, тебе ближе расслабленный бит и тёплый вайб – музыка для долгой дороги и спокойного вечера.",
       },
     ],
   },
