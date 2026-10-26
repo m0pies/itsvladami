@@ -21,9 +21,9 @@ const { guideId, guide } = Astro.props;
     width="960"
     height="1280"
     loading="lazy"
-    class="aspect-3/4 w-full rounded-lg object-cover"
+    class="h-full w-full rounded-lg border border-border/50 object-cover"
   />
-  <div>
+  <div class="h-fit">
     <p class="text-small text-muted">Рекомендация</p>
     <h3 class="mt-1 text-body">{guide.title}</h3>
     <div class="mt-4 flex flex-wrap gap-2">

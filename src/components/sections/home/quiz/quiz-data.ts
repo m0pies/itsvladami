@@ -50,22 +50,22 @@ export const questions: QuizQuestion[] = [
     options: [
       {
         id: "books-and-films",
-        label: "Книги / кино",
+        label: "чилю дома",
         city: "beijing",
       },
       {
         id: "walk-and-music",
-        label: "Гуляю по городу",
+        label: "гуляю по городу",
         city: "shenzhen",
       },
       {
         id: "exhibitions-and-museums",
-        label: "Выставки / музей",
+        label: "хожу на выставки",
         city: "shanghai",
       },
       {
         id: "friends-and-food",
-        label: "С друзьми",
+        label: "еду куда то поесть",
         city: "guangzhou",
       },
     ],
@@ -114,27 +114,27 @@ export const questions: QuizQuestion[] = [
     options: [
       {
         id: "lana-del-rey",
-        label: "Лана Дель Рей",
+        label: "Lana Del Rey",
         city: "beijing",
-        feedback: "Ага, ты любишь меланхоличную и кинематографичную музыку – такую, под которую хочется смотреть в окно и немного грустить красиво.",
+        feedback: "А кто не любит Ланочку. Ты любишь меланхоличную  музыку, под которую хочется красиво грустить.",
       },
       {
         id: "madk1d",
-        label: "Мэдкид",
+        label: "madk1d",
         city: "shenzhen",
-        feedback: "Ага, тебе нужен драйв: электронный звук, резкий бит и ощущение, что ночь только начинается.",
+        feedback: "Попался, нефор. Тебе нужен драйв, резкие ощущения, и чувство, что ночь только начинается.",
       },
       {
-        id: "charli-xcx",
-        label: "Charli xcx",
+        id: "bts",
+        label: "BTS",
         city: "shanghai",
-        feedback: "Ага, ты выбираешь яркий поп, блеск и танцы –— чем громче и смелее, тем лучше.",
+        feedback: "Если вы любите китайский то скорее всего твой биас – J-Hope. BTS легенды.",
       },
       {
         id: "miyagi-and-andy-panda",
         label: "Miyagi & Andy Panda",
         city: "guangzhou",
-        feedback: "Ага, тебе ближе расслабленный бит и тёплый вайб – музыка для долгой дороги и спокойного вечера.",
+        feedback: "Ты что тут забыл? Ладно, наверное ты любишь расслабленный тёплый вайб – музыка для долгой дороги и спокойного вечера.",
       },
     ],
   },
@@ -207,6 +207,36 @@ export const questions: QuizQuestion[] = [
         label: "доступный",
         city: "guangzhou",
         feedback: "Не совсем: у зумеров 潮 значит «трендовый». Отсюда 潮流 (cháoliú) – мода или тренд.",
+      },
+    ],
+  },
+  {
+    id: "new-city",
+    prompt: "Что ты первым делом делаешь в новом городе?",
+    visual: {
+      image: "/images/coffee.webp",
+      alt: "Кофе в городской кофейне",
+    },
+    options: [
+      {
+        id: "architecture",
+        label: "изучаю архитектуру",
+        city: "beijing",
+      },
+      {
+        id: "coffee-shops",
+        label: "ищу кофейни",
+        city: "shanghai",
+      },
+      {
+        id: "shopping-mall",
+        label: "иду в ТЦ",
+        city: "shenzhen",
+      },
+      {
+        id: "local-food",
+        label: "пробую местную еду",
+        city: "guangzhou",
       },
     ],
   },

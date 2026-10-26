@@ -26,7 +26,7 @@ const progress = total > 1 ? (index / (total - 1)) * 100 : 0;
       class="absolute top-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center transition-[left] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
       style={`left: ${progress}%`}
     >
-      <span class="absolute bottom-3 left-1/2 -translate-x-1/2 whitespace-nowrap text-xs text-muted">
+      <span class="absolute bottom-4 left-1/2 -translate-x-1/2 whitespace-nowrap text-xs text-muted">
         {index + 1} / {total}
       </span>
       <span class="size-3 rounded-full bg-accent" aria-hidden="true"></span>
