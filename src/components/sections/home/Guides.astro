@@ -1,33 +1,7 @@
 ---
 import Button from "../../Button.astro";
 import Section from "../../layout/Section.astro";
-
-const guides = [
-  {
-    title: "Фэшн чайниз",
-    description: "Китайский язык через стиль, тренды и слова, которые встречаются вокруг.",
-    price: "2 990 ₽",
-    cover: "/images/fc-cover.webp",
-    sideImages: {
-      left: "/images/fc-content.webp",
-      right: "/images/fc-page.webp",
-    },
-    purchaseUrl: null,
-    detailsUrl: null,
-  },
-  {
-    title: "В Китай без китайского",
-    description: "Фразы для первых дней в Китае: от аэропорта и такси до заказа еды.",
-    price: "990 ₽",
-    cover: "/images/vkbk-cover.webp",
-    sideImages: {
-      left: "/images/vkbk-content.webp",
-      right: "/images/vkbk-page.webp",
-    },
-    purchaseUrl: null,
-    detailsUrl: null,
-  },
-];
+import { guides } from "../../../data/guides";
 ---
 
 <Section id="guides" labelledby="guides-title">
@@ -84,8 +58,7 @@ const guides = [
             <Button
               variant="secondary"
               size="sm"
-              href={guide.detailsUrl ?? undefined}
-              disabled={!guide.detailsUrl}
+              href={`/guides/${guide.slug}/`}
               ariaLabel={`Подробнее о гайде «${guide.title}»`}
             >
               Подробнее

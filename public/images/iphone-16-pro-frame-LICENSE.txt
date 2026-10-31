@@ -1,0 +1,10 @@
+iPhone 16 Pro — Black Titanium frame
+
+Source: https://github.com/weirdapps/mockups
+Asset: src/mockups/frames/16 Pro - Black Titanium.png
+License: MIT
+Copyright (c) 2026 Dimitrios Plessas
+
+The source project notes that its device-frame imagery is based on Apple's
+publicly available product imagery and is not affiliated with or endorsed by
+Apple. iPhone is a trademark of Apple Inc.

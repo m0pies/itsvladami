@@ -44,6 +44,12 @@ const isLast = index === total - 1;
     >
     </p>
 
+    <div data-quiz-confirm-wrapper data-quiz-reveal class="mt-4 hidden items-center justify-center">
+      <Button data-quiz-confirm type="button" size="sm">
+        Подтвердить
+      </Button>
+    </div>
+
     <div data-quiz-next-wrapper data-quiz-reveal class="mt-4 hidden items-center justify-center">
       <Button data-quiz-next type="button" size="sm">
         {isLast ? "Узнать город" : "Далее"}

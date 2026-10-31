@@ -1,0 +1,145 @@
+---
+import type { Guide } from "../../../data/guides";
+import Section from "../../layout/Section.astro";
+
+interface Props {
+  guide: Guide;
+}
+
+const { guide } = Astro.props;
+---
+
+<Section id="faq" labelledby="guide-faq-title" class="overflow-x-clip">
+  <div class="rounded-2xl bg-white px-4 py-8">
+    <h2 id="guide-faq-title" class="text-center text-h2">FAQ</h2>
+
+    <div
+      class="mx-auto mt-8 flex w-full max-w-3xl flex-col gap-4 md:mt-12"
+      role="list"
+      aria-label={`Вопросы и ответы о гайде «${guide.title}»`}
+    >
+      {guide.faq.map((item) => (
+        <>
+          <div
+            class="origin-bottom-left transform-gpu"
+            data-guide-faq-message
+            data-faq-side="left"
+            role="listitem"
+          >
+            <div class="flex items-end gap-2 sm:gap-3">
+              <img
+                class="size-10 shrink-0 rounded-full border border-border object-cover sm:size-11"
+                src={item.avatar}
+                alt=""
+                width="256"
+                height="256"
+                loading="lazy"
+                aria-hidden="true"
+              />
+              <p class="max-w-[78%] rounded-2xl bg-accent-soft p-2.5 text-small text-foreground sm:max-w-[72%] sm:text-base">
+                {item.question}
+              </p>
+            </div>
+          </div>
+
+          <div
+            class="origin-bottom-right transform-gpu"
+            data-guide-faq-message
+            data-faq-side="right"
+            role="listitem"
+          >
+            <div class="flex flex-row-reverse items-end gap-2 sm:gap-3">
+              <img
+                class="size-10 shrink-0 rounded-full border border-border object-cover object-[center_30%] sm:size-11"
+                src="/images/hero.webp"
+                alt=""
+                width="960"
+                height="1280"
+                loading="lazy"
+                aria-hidden="true"
+              />
+              <p class="max-w-[78%] rounded-2xl bg-accent p-2.5 text-small text-background sm:max-w-[72%] sm:text-base">
+                {item.answer}
+              </p>
+            </div>
+          </div>
+        </>
+      ))}
+    </div>
+  </div>
+</Section>
+
+<script>
+  const messages = Array.from(
+    document.querySelectorAll<HTMLElement>("[data-guide-faq-message]"),
+  );
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+  if (!reducedMotion.matches && "IntersectionObserver" in window) {
+    const revealGap = 320;
+    let nextRevealAt = 0;
+
+    messages.forEach((message) => {
+      message.style.opacity = "0";
+      message.style.visibility = "hidden";
+    });
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const enteringMessages = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort(
+            (first, second) =>
+              messages.indexOf(first.target as HTMLElement) -
+              messages.indexOf(second.target as HTMLElement),
+          );
+
+        enteringMessages.forEach((entry) => {
+          const message = entry.target as HTMLElement;
+          const fromX = message.dataset.faqSide === "right" ? "0.75rem" : "-0.75rem";
+          const now = performance.now();
+          const delay = Math.max(0, nextRevealAt - now);
+
+          nextRevealAt = Math.max(nextRevealAt, now) + revealGap;
+          message.style.visibility = "visible";
+          message.style.willChange = "transform, opacity";
+
+          const animation = message.animate(
+            [
+              {
+                opacity: 0,
+                transform: `translate3d(${fromX}, 0.75rem, 0) scale(0.55)`,
+              },
+              {
+                opacity: 1,
+                transform: "translate3d(0, 0, 0) scale(1)",
+              },
+            ],
+            {
+              duration: 500,
+              delay,
+              easing: "cubic-bezier(0.22, 1.28, 0.36, 1)",
+              fill: "both",
+            },
+          );
+
+          animation.addEventListener(
+            "finish",
+            () => {
+              message.style.removeProperty("opacity");
+              message.style.removeProperty("visibility");
+              message.style.removeProperty("will-change");
+              animation.cancel();
+            },
+            { once: true },
+          );
+
+          observer.unobserve(message);
+        });
+      },
+      { threshold: 0.25, rootMargin: "0px 0px -6% 0px" },
+    );
+
+    messages.forEach((message) => observer.observe(message));
+  }
+</script>

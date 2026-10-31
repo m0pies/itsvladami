@@ -37,6 +37,8 @@
   --color-accent-hover: #74a12e80;
   --color-accent-soft: oklch(93% 0.003 264.542);
   --color-border: oklch(87% 0 none);
+  --color-guide-fashion: oklch(88% 0.08 350);
+  --color-guide-travel: oklch(88% 0.07 230);
 
   --text-h1: clamp(2rem, 9vw, 3.5rem);
   --text-h1--line-height: 1.15;
@@ -47,12 +49,12 @@
   --text-hero--letter-spacing: -0.035em;
   --text-hero--font-weight: 400;
 
-  --text-h2: clamp(1.35rem, 5vw, 2.25rem);
+  --text-h2: clamp(1.45rem, 5vw, 2.25rem);
   --text-h2--line-height: 1.1;
   --text-h2--letter-spacing: -0.025em;
   --text-h2--font-weight: 400;
 
-  --text-h3: clamp(1.15rem, 5vw, 2.25rem);
+  --text-h3: clamp(1.15rem, 5vw, 1.75rem);
   --text-h3--line-height: 1.1;
   --text-h3--letter-spacing: -0.015em;
   --text-h3--font-weight: 400;
@@ -115,13 +117,12 @@
 }
 
 .guide-stack.is-visible .guide-side-left {
-  transform: translateX(0) rotate(-5deg);
+  transform: translateX(0) rotate(-3deg);
 }
 
 .guide-stack.is-visible .guide-side-right {
-  transform: translateX(0) rotate(5deg);
+  transform: translateX(0) rotate(3deg);
 }
-
 
 @keyframes hero-copy-in {
   0% {

@@ -1,0 +1,70 @@
+---
+import type { Guide } from "../../../data/guides";
+import Button from "../../Button.astro";
+
+interface Props {
+  guide: Guide;
+}
+
+const { guide } = Astro.props;
+---
+
+<div
+  class="pointer-events-none fixed inset-x-3 bottom-3 z-50 translate-y-full opacity-0 transition-[transform,opacity] duration-300 motion-reduce:transition-none md:hidden"
+  data-guide-sticky-purchase
+  aria-hidden="true"
+  inert
+>
+  <div class="mx-auto flex max-w-md items-center justify-between gap-4 rounded-xl border border-border bg-background/95 p-2 pl-4 shadow-xl backdrop-blur-md">
+    <div class="min-w-0">
+      <p class="truncate text-xs text-muted">{guide.title}</p>
+      <p class="text-sm font-medium">{guide.price}</p>
+    </div>
+    <Button
+      variant="primary"
+      size="sm"
+      href={guide.purchaseUrl ?? undefined}
+      disabled={!guide.purchaseUrl}
+      ariaLabel={`Купить «${guide.title}» за ${guide.price}`}
+    >
+      Купить
+    </Button>
+  </div>
+</div>
+
+<script>
+  const stickyPurchase = document.querySelector<HTMLElement>("[data-guide-sticky-purchase]");
+  const guideHero = document.querySelector<HTMLElement>("[data-guide-hero]");
+  const siteFooter = document.querySelector<HTMLElement>("footer");
+
+  if (stickyPurchase && guideHero && siteFooter && "IntersectionObserver" in window) {
+    let isHeroVisible = true;
+    let isFooterVisible = false;
+
+    const syncStickyPurchase = () => {
+      const shouldShow = !isHeroVisible && !isFooterVisible;
+
+      stickyPurchase.classList.toggle("translate-y-full", !shouldShow);
+      stickyPurchase.classList.toggle("opacity-0", !shouldShow);
+      stickyPurchase.classList.toggle("pointer-events-none", !shouldShow);
+      stickyPurchase.classList.toggle("translate-y-0", shouldShow);
+      stickyPurchase.classList.toggle("opacity-100", shouldShow);
+      stickyPurchase.classList.toggle("pointer-events-auto", shouldShow);
+      stickyPurchase.setAttribute("aria-hidden", String(!shouldShow));
+      stickyPurchase.inert = !shouldShow;
+    };
+
+    const heroObserver = new IntersectionObserver(([entry]) => {
+      isHeroVisible = entry?.isIntersecting ?? false;
+      syncStickyPurchase();
+    });
+
+    const footerObserver = new IntersectionObserver(([entry]) => {
+      isFooterVisible = entry?.isIntersecting ?? false;
+      syncStickyPurchase();
+    });
+
+    heroObserver.observe(guideHero);
+    footerObserver.observe(siteFooter);
+  }
+</script>

@@ -28,6 +28,7 @@ import { questions } from "./quiz/quiz-data";
     const screens = Array.from(quiz.querySelectorAll<HTMLElement>("[data-quiz-screen]"));
     const questionScreens = Array.from(quiz.querySelectorAll<HTMLElement>("[data-quiz-question]"));
     const answers: Array<Answer | null> = Array.from({ length: questionScreens.length }, () => null);
+    const confirmedSteps = Array.from({ length: questionScreens.length }, () => false);
     const answerButtons = Array.from(quiz.querySelectorAll<HTMLButtonElement>("[data-quiz-answer]"));
     const resultItems = Array.from(quiz.querySelectorAll<HTMLElement>("[data-quiz-city-result]"));
     const guideItems = Array.from(quiz.querySelectorAll<HTMLElement>("[data-quiz-guide-result]"));
@@ -167,6 +168,7 @@ import { questions } from "./quiz/quiz-data";
       const screen = quiz.querySelector<HTMLElement>(`[data-quiz-screen="${step}"]`);
       if (!screen) return;
       const hasAnswer = Boolean(answers[step]);
+      const isConfirmed = confirmedSteps[step];
 
       answerButtons
         .filter((button) => Number(button.dataset.step) === step)
@@ -174,27 +176,33 @@ import { questions } from "./quiz/quiz-data";
           const selected = button.dataset.answer === answers[step]?.id;
           button.dataset.selected = String(selected);
           button.setAttribute("aria-pressed", String(selected));
-          button.disabled = hasAnswer;
+          button.disabled = isConfirmed;
         });
 
       const feedback = screen.querySelector<HTMLElement>("[data-quiz-feedback]");
+      const confirmWrapper = screen.querySelector<HTMLElement>("[data-quiz-confirm-wrapper]");
       const nextWrapper = screen.querySelector<HTMLElement>("[data-quiz-next-wrapper]");
       const selectedButton = answerButtons.find(
         (button) => Number(button.dataset.step) === step && button.dataset.answer === answers[step]?.id,
       );
       const selectedFeedback = selectedButton?.dataset.feedback?.trim() ?? "";
-      const hasFeedback = hasAnswer && selectedFeedback.length > 0;
+      const hasFeedback = isConfirmed && selectedFeedback.length > 0;
+      const showConfirm = hasAnswer && !isConfirmed;
       const shouldAnimateFeedback = hasFeedback && Boolean(feedback?.classList.contains("hidden"));
-      const shouldAnimateNext = hasAnswer && Boolean(nextWrapper?.classList.contains("hidden"));
+      const shouldAnimateConfirm = showConfirm && Boolean(confirmWrapper?.classList.contains("hidden"));
+      const shouldAnimateNext = isConfirmed && Boolean(nextWrapper?.classList.contains("hidden"));
 
       if (feedback) feedback.textContent = selectedFeedback;
       feedback?.classList.toggle("hidden", !hasFeedback);
-      nextWrapper?.classList.toggle("hidden", !hasAnswer);
-      nextWrapper?.classList.toggle("flex", hasAnswer);
+      confirmWrapper?.classList.toggle("hidden", !showConfirm);
+      confirmWrapper?.classList.toggle("flex", showConfirm);
+      nextWrapper?.classList.toggle("hidden", !isConfirmed);
+      nextWrapper?.classList.toggle("flex", isConfirmed);
 
-      if (shouldAnimateFeedback || shouldAnimateNext) {
+      if (shouldAnimateFeedback || shouldAnimateConfirm || shouldAnimateNext) {
         requestAnimationFrame(() => {
           if (shouldAnimateFeedback && feedback) animateElement(feedback);
+          if (shouldAnimateConfirm && confirmWrapper) animateElement(confirmWrapper);
           if (shouldAnimateNext && nextWrapper) animateElement(nextWrapper, shouldAnimateFeedback ? 70 : 0);
           keepScreenVisible(screen);
         });
@@ -308,7 +316,7 @@ import { questions } from "./quiz/quiz-data";
         const city = button.dataset.city as CityId | undefined;
         const id = button.dataset.answer;
 
-        if (!city || !id || answers[step]) return;
+        if (!city || !id || confirmedSteps[step]) return;
         answers[step] = { id, city };
         refreshStep(step);
       });
@@ -318,10 +326,20 @@ import { questions } from "./quiz/quiz-data";
       showScreen("0", 0);
     });
 
+    quiz.querySelectorAll<HTMLButtonElement>("[data-quiz-confirm]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const step = Number(button.closest<HTMLElement>("[data-quiz-screen]")?.dataset.quizScreen);
+        if (!answers[step] || confirmedSteps[step]) return;
+
+        confirmedSteps[step] = true;
+        refreshStep(step);
+      });
+    });
+
     quiz.querySelectorAll<HTMLButtonElement>("[data-quiz-next]").forEach((button) => {
       button.addEventListener("click", () => {
         const step = Number(button.closest<HTMLElement>("[data-quiz-screen]")?.dataset.quizScreen);
-        if (!answers[step]) return;
+        if (!confirmedSteps[step]) return;
 
         if (step === answers.length - 1) showResult();
         else {
@@ -334,6 +352,7 @@ import { questions } from "./quiz/quiz-data";
 
     quiz.querySelector<HTMLButtonElement>("[data-quiz-restart]")?.addEventListener("click", () => {
       answers.fill(null);
+      confirmedSteps.fill(false);
       for (let step = 0; step < answers.length; step += 1) refreshStep(step);
       resetResult();
       showScreen("0", 0);

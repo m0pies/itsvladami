@@ -1,0 +1,39 @@
+---
+import GuideAdvantages from "../../components/sections/guide/GuideAdvantages.astro";
+import GuideAudience from "../../components/sections/guide/GuideAudience.astro";
+import GuideContents from "../../components/sections/guide/GuideContents.astro";
+import GuideFaq from "../../components/sections/guide/GuideFaq.astro";
+import GuideHero from "../../components/sections/guide/GuideHero.astro";
+import GuidePreview from "../../components/sections/guide/GuidePreview.astro";
+import GuideStickyPurchase from "../../components/sections/guide/GuideStickyPurchase.astro";
+import { guides, type Guide } from "../../data/guides";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+export function getStaticPaths() {
+  return guides.map((guide) => ({
+    params: { slug: guide.slug },
+    props: { guide },
+  }));
+}
+
+interface Props {
+  guide: Guide;
+}
+
+const { guide } = Astro.props;
+---
+
+<BaseLayout
+  title={`${guide.title} — PDF-гайд | itsvladami`}
+  description={guide.description}
+>
+  <main>
+    <GuideHero guide={guide} />
+    <GuideAdvantages guide={guide} />
+    <GuideAudience guide={guide} />
+    <GuidePreview guide={guide} />
+    <GuideContents guide={guide} />
+    <GuideFaq guide={guide} />
+  </main>
+  <GuideStickyPurchase guide={guide} />
+</BaseLayout>

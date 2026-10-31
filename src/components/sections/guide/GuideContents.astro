@@ -1,0 +1,139 @@
+---
+import type { Guide } from "../../../data/guides";
+import Section from "../../layout/Section.astro";
+
+interface Props {
+  guide: Guide;
+}
+
+const { guide } = Astro.props;
+---
+
+<Section id="contents" labelledby="guide-contents-title" containerClass="max-w-3xl">
+  <div data-guide-contents>
+    <div class="text-center">
+      <h2 id="guide-contents-title" class="text-h2" data-guide-contents-title>Что внутри</h2>
+    </div>
+
+    <ul
+      class="mt-8 grid grid-cols-3 gap-x-3 gap-y-5 sm:mt-10 sm:gap-x-5 sm:gap-y-7"
+      aria-label={`Темы гайда «${guide.title}»`}
+    >
+      {guide.contents.map((item) => (
+        <li data-guide-contents-card>
+          <img
+            class="aspect-square w-full rounded-xl object-cover"
+            src={item.image}
+            alt={item.imageAlt}
+            width="480"
+            height="480"
+            loading="lazy"
+          />
+          <p class="mt-2 text-center text-xs leading-tight font-light text-muted sm:mt-3 sm:text-small">
+            {item.label}
+          </p>
+        </li>
+      ))}
+    </ul>
+
+    <p class="mt-8 max-w-xs text-balance text-center text-small text-muted sm:mt-10" data-guide-contents-note>
+      И это ещё не всё – внутри найдётся ещё много полезного.
+    </p>
+  </div>
+</Section>
+
+<script>
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const startTransform = "translateY(0.75rem) scale(0.97)";
+
+  const setupGuideContents = () => {
+    const sections = Array.from(
+      document.querySelectorAll<HTMLElement>("[data-guide-contents]:not([data-guide-contents-ready])"),
+    );
+
+    sections.forEach((section) => {
+      section.dataset.guideContentsReady = "true";
+
+      if (reducedMotion.matches || !("IntersectionObserver" in window)) return;
+
+      const title = section.querySelector<HTMLElement>("[data-guide-contents-title]");
+      const cards = Array.from(section.querySelectorAll<HTMLElement>("[data-guide-contents-card]"));
+      const note = section.querySelector<HTMLElement>("[data-guide-contents-note]");
+      const cardImages = cards
+        .map((card) => card.querySelector<HTMLImageElement>("img"))
+        .filter(Boolean) as HTMLImageElement[];
+
+      [title, ...cards, note].filter(Boolean).forEach((element) => {
+        const target = element as HTMLElement;
+        target.style.opacity = "0";
+        target.style.transform = startTransform;
+      });
+      cardImages.forEach((image) => {
+        image.style.filter = "blur(0.5rem)";
+      });
+
+      const reveal = (element: HTMLElement, delay = 0) => {
+        const animation = element.animate(
+          [
+            { opacity: 0, transform: startTransform },
+            { opacity: 1, transform: "translateY(0) scale(1)" },
+          ],
+          {
+            duration: 520,
+            delay,
+            easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+            fill: "both",
+          },
+        );
+
+        void animation.finished.then(() => {
+          element.style.opacity = "1";
+          element.style.transform = "translateY(0) scale(1)";
+          animation.cancel();
+        }).catch(() => {});
+      };
+
+      const revealPhoto = (image: HTMLImageElement, delay: number) => {
+        const animation = image.animate(
+          [
+            { filter: "blur(0.5rem)" },
+            { filter: "blur(0)" },
+          ],
+          {
+            duration: 520,
+            delay,
+            easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+            fill: "both",
+          },
+        );
+
+        void animation.finished.then(() => {
+          image.style.filter = "blur(0)";
+          animation.cancel();
+        }).catch(() => {});
+      };
+
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (!entry?.isIntersecting) return;
+
+          if (title) reveal(title);
+          cards.forEach((card, index) => {
+            const delay = 300 + index * 90;
+            reveal(card, delay);
+            const image = cardImages[index];
+            if (image) revealPhoto(image, delay);
+          });
+          if (note) reveal(note, 300 + cards.length * 90 + 120);
+          observer.unobserve(section);
+        },
+        { threshold: 0.15, rootMargin: "0px 0px -8% 0px" },
+      );
+
+      observer.observe(section);
+    });
+  };
+
+  setupGuideContents();
+  document.addEventListener("astro:page-load", setupGuideContents);
+</script>
